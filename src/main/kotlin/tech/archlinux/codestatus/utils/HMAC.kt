@@ -1,5 +1,6 @@
 package tech.archlinux.codestatus.utils
 
+import org.apache.commons.codec.binary.Hex
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
@@ -10,22 +11,14 @@ object HMAC {
 	 * @param secret 密钥
 	 */
 	fun calculateHMac(
-		algorithm: String = "HmacSHA256",
-		secret: String,
-		data: String
+        algorithm: String = "HmacSHA256",
+        secret: String,
+        data: ByteArray
 	): String {
 		val hmac = Mac.getInstance(algorithm)
 		// 初始化 hmac
 		hmac.init(SecretKeySpec(secret.encodeToByteArray(), algorithm))
 
-		return byteArrayToHex(hmac.doFinal(data.encodeToByteArray()))
-	}
-
-	private fun byteArrayToHex(ba: ByteArray): String {
-		val sb = StringBuilder(ba.size * 2)
-		ba.forEach { b ->
-			sb.append(String.format("%02x", b))
-		}
-		return sb.toString()
+        return Hex.encodeHexString(hmac.doFinal(data))
 	}
 }

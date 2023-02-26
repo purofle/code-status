@@ -1,10 +1,13 @@
 spring:
   datasource:
+    url: jdbc:postgresql://localhost:5432/codestatus
     driver-class-name: org.postgresql.Driver
     username: codestatus
     password: 114514
   mvc:
     log-request-details: true
+  application:
+    name: codestatus
 
 logging:
   level:

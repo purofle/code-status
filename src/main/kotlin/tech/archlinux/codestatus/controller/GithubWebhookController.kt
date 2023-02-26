@@ -5,26 +5,33 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.util.ContentCachingRequestWrapper
+import tech.archlinux.codestatus.WebHookType
+import tech.archlinux.codestatus.config.AppConfig
 import tech.archlinux.codestatus.service.GithubWebhookService
+import java.util.*
 
 @RestController
 class GithubWebhookController {
 
-	@Autowired
-	lateinit var githubWebhookService: GithubWebhookService
-	private val log: Logger = LoggerFactory.getLogger(GithubWebhookController::class.java)
+    @Autowired
+    lateinit var githubWebhookService: GithubWebhookService
+    private val log: Logger = LoggerFactory.getLogger(GithubWebhookController::class.java)
 
-	@PostMapping("/event_handler")
-	fun handlerWebhook(request: HttpServletRequest, @RequestBody payload: Map<Any, Any>) {
-		// 查看所有 header
-		request.headerNames.toList().forEach {
-			log.info("header: $it -> ${request.getHeader(it)}")
-		}
+    @PostMapping(AppConfig.webhook)
+    fun handlerWebhook(req: HttpServletRequest) {
 
-		// 检查 X-Hub-Signature 签名
-		val signature = request.getHeader("X-Hub-Signature")
+        val request = ContentCachingRequestWrapper(req)
 
-	}
+        // 查看所有 header
+        request.headerNames.toList().forEach {
+            log.debug("header: $it -> ${request.getHeader(it)}")
+        }
+
+        githubWebhookService.handleWebhook(
+            WebHookType.valueOf(request.getHeader("x-github-event").uppercase(Locale.getDefault())),
+            request.reader.readText()
+        )
+    }
 }
