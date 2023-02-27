@@ -12,9 +12,10 @@ class GithubUtils {
     lateinit var secret: String
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
-    fun validateSignature(signature: String, payload: ByteArray): Boolean {
+    fun validateSignature(signature: String, payload: String): Boolean {
 
         val sha256 = "sha256=${HMAC.calculateHMac(secret = secret, data = payload)}"
+        logger.info("payload: $payload")
         logger.info("sha256: $sha256")
         logger.info("signature: $signature")
         return sha256 == signature

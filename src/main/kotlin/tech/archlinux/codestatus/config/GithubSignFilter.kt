@@ -13,8 +13,6 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.nio.charset.Charset
 
-
-// FIXME: 2023/02/26 签名验证有误
 @Component
 class GithubSignFilter : HandlerInterceptor {
 
@@ -35,7 +33,7 @@ class GithubSignFilter : HandlerInterceptor {
         }
 
         // 获取 body bytes
-        val body = getRequestString(request)?.toByteArray() ?: return false
+        val body = getRequestString(request) ?: ""
         // 获取签名
         val signPass = githubUtils.validateSignature(request.getHeader("x-hub-signature-256"), body)
 

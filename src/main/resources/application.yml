@@ -14,4 +14,4 @@ logging:
     web: debug
 
 github:
-  secret: d31047e36443a9340267a0f139d5a12b79539c6c
+  secret: 1

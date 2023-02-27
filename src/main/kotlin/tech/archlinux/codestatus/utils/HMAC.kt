@@ -1,24 +1,22 @@
 package tech.archlinux.codestatus.utils
 
 import org.apache.commons.codec.binary.Hex
-import javax.crypto.Mac
-import javax.crypto.spec.SecretKeySpec
+import org.apache.commons.codec.digest.HmacAlgorithms
+import org.apache.commons.codec.digest.HmacUtils
 
 object HMAC {
-	/**
-	 * 计算 HMAC_SHA256
-	 * @param algorithm 算法
-	 * @param secret 密钥
-	 */
-	fun calculateHMac(
-        algorithm: String = "HmacSHA256",
+    /**
+     * 计算 HMAC_SHA256
+     * @param algorithm 算法
+     * @param secret 密钥
+     */
+    fun calculateHMac(
+        algorithm: HmacAlgorithms = HmacAlgorithms.HMAC_SHA_256,
         secret: String,
-        data: ByteArray
-	): String {
-		val hmac = Mac.getInstance(algorithm)
-		// 初始化 hmac
-		hmac.init(SecretKeySpec(secret.encodeToByteArray(), algorithm))
+        data: String
+    ): String {
 
-        return Hex.encodeHexString(hmac.doFinal(data))
-	}
+        val mac = HmacUtils.getInitializedMac(algorithm, secret.encodeToByteArray())
+        return Hex.encodeHexString(mac.doFinal(data.encodeToByteArray()))
+    }
 }
