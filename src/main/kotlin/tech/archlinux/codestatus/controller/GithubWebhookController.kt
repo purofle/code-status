@@ -20,7 +20,9 @@ class GithubWebhookController {
     private val log: Logger = LoggerFactory.getLogger(GithubWebhookController::class.java)
 
     @PostMapping(AppConfig.webhook)
-    fun handlerWebhook(req: HttpServletRequest) {
+    fun handlerWebhook(
+        req: HttpServletRequest
+    ) {
 
         val request = ContentCachingRequestWrapper(req)
 
@@ -28,6 +30,7 @@ class GithubWebhookController {
         request.headerNames.toList().forEach {
             log.debug("header: $it -> ${request.getHeader(it)}")
         }
+
 
         githubWebhookService.handleWebhook(
             WebHookType.valueOf(request.getHeader("x-github-event").uppercase(Locale.getDefault())),

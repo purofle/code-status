@@ -37,13 +37,15 @@ class GithubSignFilter : HandlerInterceptor {
         // 获取签名
         val signPass = githubUtils.validateSignature(request.getHeader("x-hub-signature-256"), body)
 
-        log.debug(body)
-        if (signPass) {
-            return true
+        log.debug("body: $body")
+
+        return if (signPass) {
+            true
+        } else {
+            returnError(res, "X-Hub-Signature-256 not match")
+            false
         }
 
-        returnError(res, "X-Hub-Signature-256 not match")
-        return false
     }
 
     private fun getRequestString(request: HttpServletRequest): String? {

@@ -14,5 +14,6 @@ class PushWebhookHandler : GithubWebhookHandler {
 
     override fun handle(payload: String) {
         logger.info("Handling push webhook")
+
     }
 }
