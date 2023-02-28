@@ -16,7 +16,7 @@ class HttpServletFilter : Filter {
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         when (request) {
             is HttpServletRequest -> {
-                log.info("Request: ${request.method} ${request.requestURI}")
+                log.debug("Request: ${request.method} ${request.requestURI}")
                 val requestWrapper = RequestWrapper(request)
                 chain.doFilter(requestWrapper, response)
             }

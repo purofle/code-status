@@ -12,6 +12,7 @@ spring:
 logging:
   level:
     web: debug
+    tech.archlinux.codestatus: debug
 
 github:
   secret: 1

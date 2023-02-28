@@ -13,7 +13,7 @@ class PushWebhookHandler : GithubWebhookHandler {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     override fun handle(payload: String) {
-        logger.info("Handling push webhook")
+        logger.debug("Handling push webhook")
 
     }
 }

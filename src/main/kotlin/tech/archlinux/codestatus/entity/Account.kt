@@ -10,5 +10,6 @@ class Account(
     @Id val id: Int,
     @Column(name = "node_id") val nodeId: String,
     @Column(name = "avatar_url") val avatarUrl: String,
-    val email: String
+    val email: String,
+    val name: String,
 )
