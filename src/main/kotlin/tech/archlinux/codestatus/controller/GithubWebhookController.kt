@@ -1,7 +1,6 @@
 package tech.archlinux.codestatus.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -28,6 +27,9 @@ class GithubWebhookController {
     @Autowired
     lateinit var accountRepository: AccountRepository
 
+    @Autowired
+    lateinit var objectMapper: ObjectMapper
+
     private val log: Logger = LoggerFactory.getLogger(GithubWebhookController::class.java)
 
     @RequestMapping(AppConfig.webhook, method = [RequestMethod.POST])
@@ -43,29 +45,24 @@ class GithubWebhookController {
             log.debug("header: $it -> ${request.getHeader(it)}")
         }
 
-        ObjectMapper().readValue<Sender>(requestBody["sender"].toString())
-
-        val sender = requestBody["sender"] as Map<*, *>
+        val sender = objectMapper.convertValue(requestBody["sender"], Sender::class.java)
         val pusher = requestBody["pusher"] as Map<*, *>
-
-        val name = sender["login"] as String
-        val id = sender["id"] as Int
-        val nodeId = sender["node_id"] as String
-        val avatarUrl = sender["avatar_url"] as String
         val email = pusher["email"] as String
 
-        // 判断用户是否存在
-        if (!accountRepository.existsAccountById(id)) {
-            accountRepository.save(
-                Account(
-                    id = id,
-                    name = name,
-                    nodeId = nodeId,
-                    avatarUrl = avatarUrl,
-                    email = email
+        sender.apply {
+            // 判断用户是否存在
+            if (!accountRepository.existsAccountById(id)) {
+                accountRepository.save(
+                    Account(
+                        id = id,
+                        name = login,
+                        nodeId = nodeId,
+                        avatarUrl = avatarUrl,
+                        email = email
+                    )
                 )
-            )
-            log.debug("new account: $name ($id)")
+                log.debug("new account: $login ($id)")
+            }
         }
 
         githubWebhookService.handleWebhook(
