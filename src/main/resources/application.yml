@@ -15,3 +15,4 @@ logging:
 
 github:
   secret: 1
+  debug: false

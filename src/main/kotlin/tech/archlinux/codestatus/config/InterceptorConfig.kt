@@ -8,9 +8,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration
 class InterceptorConfig : WebMvcConfigurer {
     @Autowired
-    lateinit var githubSignFilter: GithubSignFilter
+    lateinit var githubSignInterceptor: GithubSignInterceptor
 
     override fun addInterceptors(registry: InterceptorRegistry) {
-        registry.addInterceptor(githubSignFilter)
+        registry.addInterceptor(githubSignInterceptor)
+            .addPathPatterns(AppConfig.webhook)
     }
 }

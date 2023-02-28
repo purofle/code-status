@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Primary
 @Configuration
 class AppConfig {
 
+
     @Bean
     @Primary
     fun objectMapper(): ObjectMapper = ObjectMapper().registerModule(

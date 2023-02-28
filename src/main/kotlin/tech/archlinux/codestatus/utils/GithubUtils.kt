@@ -11,6 +11,9 @@ class GithubUtils {
     @Value("\${github.secret}")
     lateinit var secret: String
 
+    @Value("\${github.debug}")
+    var debug: Boolean = false
+
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     fun validateSignature(signature: String, payload: String): Boolean {
 

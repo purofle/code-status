@@ -7,50 +7,51 @@ import org.apache.juli.logging.LogFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
-import org.springframework.web.util.ContentCachingRequestWrapper
 import tech.archlinux.codestatus.utils.GithubUtils
 import java.io.BufferedReader
+import java.io.InputStream
 import java.io.InputStreamReader
 import java.nio.charset.Charset
 
 @Component
-class GithubSignFilter : HandlerInterceptor {
+class GithubSignInterceptor : HandlerInterceptor {
 
     @Autowired
     lateinit var githubUtils: GithubUtils
     val log: Log = LogFactory.getLog(this::class.java)
 
-    override fun preHandle(req: HttpServletRequest, res: HttpServletResponse, handler: Any): Boolean {
+    override fun preHandle(request: HttpServletRequest, res: HttpServletResponse, handler: Any): Boolean {
 
-        val request = ContentCachingRequestWrapper(req)
+        val requestWrapper = RequestWrapper(request)
 
-        // 判断是否存在 X-Hub-Signature-256
-        val isSigned = request.headerNames.toList().firstOrNull { it == "x-hub-signature-256" }
-
-        if (isSigned == null) {
-            returnError(res, "X-Hub-Signature-256 not found")
-            return false
+        if (githubUtils.debug) {
+            return true
         }
 
+        // 判断是否存在 X-Hub-Signature-256
+        request.headerNames.toList().firstOrNull { it == "x-hub-signature-256" }
+            ?: throw RuntimeException("X-Hub-Signature-256 not found")
+
         // 获取 body bytes
-        val body = getRequestString(request) ?: ""
+        val body = getRequestString(requestWrapper.inputStream) ?: throw RuntimeException("body not found")
+
+        request.setAttribute("requestBody", body)
+
         // 获取签名
         val signPass = githubUtils.validateSignature(request.getHeader("x-hub-signature-256"), body)
 
         log.debug("body: $body")
 
-        return if (signPass) {
-            true
-        } else {
-            returnError(res, "X-Hub-Signature-256 not match")
-            false
+        if (!signPass) {
+            throw RuntimeException("X-Hub-Signature-256 not match")
         }
 
+        return true
     }
 
-    private fun getRequestString(request: HttpServletRequest): String? {
+    private fun getRequestString(inputStream: InputStream): String? {
         return try {
-            val streamReader = BufferedReader(InputStreamReader(request.inputStream, Charset.defaultCharset()))
+            val streamReader = BufferedReader(InputStreamReader(inputStream, Charset.defaultCharset()))
             val sb = StringBuilder()
             var inputStr: String?
             while (streamReader.readLine().also { inputStr = it } != null) {
@@ -59,14 +60,6 @@ class GithubSignFilter : HandlerInterceptor {
             sb.toString()
         } catch (e: Exception) {
             null
-        }
-    }
-
-    fun returnError(res: HttpServletResponse, msg: String) {
-        res.status = 403
-        res.writer.also {
-            it.println(msg)
-            it.close()
         }
     }
 
