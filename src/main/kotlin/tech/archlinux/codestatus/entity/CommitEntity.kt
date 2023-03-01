@@ -6,11 +6,11 @@ import org.hibernate.annotations.Type
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "push_event")
-class PushEvent(
+@Table(name = "commits")
+class CommitEntity(
     @OneToOne
     @JoinColumn(name = "user_id")
-    val userId: Account,
+    val userId: AccountEntity,
 
     @Id
     @Column(name = "commit_id")
@@ -28,17 +28,17 @@ class PushEvent(
 
     @Column(name = "added_files", columnDefinition = "text[]")
     @Type(ListArrayType::class)
-    val addedFiles: Array<String>,
+    val addedFiles: List<String>,
 
     @Column(name = "removed_files", columnDefinition = "text[]")
     @Type(ListArrayType::class)
-    val removedFiles: Array<String>,
+    val removedFiles: List<String>,
 
     @Column(name = "modified_files", columnDefinition = "text[]")
     @Type(ListArrayType::class)
-    val modifiedFiles: Array<String>,
+    val modifiedFiles: List<String>,
 
     @OneToOne
     @JoinColumn(name = "repository_id")
-    var repositoryId: Repository
+    var repositoryId: RepositoryEntity
 )

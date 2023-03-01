@@ -1,4 +1,4 @@
-package tech.archlinux.codestatus.entity
+package tech.archlinux.codestatus.pojo
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

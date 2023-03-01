@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.ContentCachingRequestWrapper
 import tech.archlinux.codestatus.WebHookType
 import tech.archlinux.codestatus.config.AppConfig
-import tech.archlinux.codestatus.entity.Account
-import tech.archlinux.codestatus.entity.Sender
+import tech.archlinux.codestatus.entity.AccountEntity
+import tech.archlinux.codestatus.pojo.Sender
 import tech.archlinux.codestatus.repository.AccountRepository
 import tech.archlinux.codestatus.service.GithubWebhookService
 import java.util.*
@@ -45,6 +45,12 @@ class GithubWebhookController {
             log.debug("header: $it -> ${request.getHeader(it)}")
         }
 
+        // 判断是否有 sender
+        if (!requestBody.containsKey("sender")) {
+            log.debug("no sender")
+            return
+        }
+
         val sender = objectMapper.convertValue(requestBody["sender"], Sender::class.java)
         val pusher = requestBody["pusher"] as Map<*, *>
         val email = pusher["email"] as String
@@ -53,7 +59,7 @@ class GithubWebhookController {
             // 判断用户是否存在
             if (!accountRepository.existsAccountById(id)) {
                 accountRepository.save(
-                    Account(
+                    AccountEntity(
                         id = id,
                         name = login,
                         nodeId = nodeId,

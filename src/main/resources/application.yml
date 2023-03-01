@@ -8,6 +8,8 @@ spring:
     log-request-details: true
   application:
     name: codestatus
+  jpa:
+    show-sql: true
 
 logging:
   level:

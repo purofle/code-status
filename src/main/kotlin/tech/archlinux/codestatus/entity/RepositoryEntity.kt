@@ -4,7 +4,7 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "repository", schema = "public", catalog = "codestatus")
-class Repository(
+class RepositoryEntity(
     @Id
     @Column(name = "id")
     val id: Int,
@@ -20,5 +20,5 @@ class Repository(
 
     @OneToOne
     @JoinColumn(name = "owner_id")
-    val ownerId: Account
+    val ownerId: AccountEntity
 )
