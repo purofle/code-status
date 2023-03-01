@@ -3,7 +3,7 @@ package tech.archlinux.codestatus.entity
 import io.hypersistence.utils.hibernate.type.array.ListArrayType
 import jakarta.persistence.*
 import org.hibernate.annotations.Type
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 @Entity
 @Table(name = "commits")
@@ -18,7 +18,7 @@ class CommitEntity(
     val commitId: String,
 
     @Column(name = "timestamp")
-    val timestamp: LocalDateTime,
+    val timestamp: OffsetDateTime,
 
     @Column(name = "message")
     val message: String,

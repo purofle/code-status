@@ -6,5 +6,5 @@ import tech.archlinux.codestatus.entity.RepositoryEntity as GithubRepository
 
 @Repository
 interface RepositoryRepository : CrudRepository<GithubRepository, Int> {
-    fun existsRepositoryById(id: Int): Boolean
+    fun findRepositoryEntityById(id: Int): GithubRepository?
 }

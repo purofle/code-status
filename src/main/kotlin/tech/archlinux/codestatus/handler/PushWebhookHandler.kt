@@ -7,10 +7,11 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import tech.archlinux.codestatus.WebHookType
+import tech.archlinux.codestatus.entity.CommitEntity
 import tech.archlinux.codestatus.entity.RepositoryEntity
 import tech.archlinux.codestatus.pojo.PushEvent
 import tech.archlinux.codestatus.repository.AccountRepository
-import tech.archlinux.codestatus.repository.PushEventRepository
+import tech.archlinux.codestatus.repository.CommitRepository
 import tech.archlinux.codestatus.repository.RepositoryRepository
 
 @Component
@@ -24,7 +25,7 @@ class PushWebhookHandler : GithubWebhookHandler {
     lateinit var repositoryRepository: RepositoryRepository
 
     @Autowired
-    lateinit var pushEventRepository: PushEventRepository
+    lateinit var commitRepository: CommitRepository
 
     @Autowired
     lateinit var accountRepository: AccountRepository
@@ -45,18 +46,35 @@ class PushWebhookHandler : GithubWebhookHandler {
                 logger.debug("Account: $account")
                 logger.debug("pushEvent: $pushEvent")
 
-                if (!repositoryRepository.existsRepositoryById(id)) {
-                    repositoryRepository.save(
-                        RepositoryEntity(
-                            id = id,
-                            nodeId = nodeId,
-                            fullName = fullName,
-                            isPrivate = isPrivate,
-                            ownerId = account!!
+                val repo = repositoryRepository.findRepositoryEntityById(id) ?: repositoryRepository.save(
+                    RepositoryEntity(
+                        id = id,
+                        nodeId = nodeId,
+                        fullName = fullName,
+                        isPrivate = isPrivate,
+                        ownerId = account!!
+                    )
+                )
+
+                commits.forEach {
+                    commitRepository.save(
+                        CommitEntity(
+                            userId = account!!,
+                            commitId = it.id,
+                            timestamp = it.timestamp,
+                            message = it.message,
+                            url = it.url,
+                            addedFiles = it.added,
+                            removedFiles = it.removed,
+                            modifiedFiles = it.modified,
+                            repositoryId = repo
                         )
                     )
                 }
+
             }
+
+
             commits.apply {
                 logger.debug("Commits: $this")
             }

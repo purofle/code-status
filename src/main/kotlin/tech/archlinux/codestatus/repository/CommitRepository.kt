@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository
 import tech.archlinux.codestatus.entity.CommitEntity
 
 @Repository
-interface PushEventRepository : CrudRepository<CommitEntity, Int> {
+interface CommitRepository : CrudRepository<CommitEntity, Int> {
 
 }
