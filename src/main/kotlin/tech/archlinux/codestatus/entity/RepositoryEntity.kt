@@ -18,7 +18,7 @@ class RepositoryEntity(
     @Column(name = "private")
     val isPrivate: Boolean,
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     val ownerId: AccountEntity
 )

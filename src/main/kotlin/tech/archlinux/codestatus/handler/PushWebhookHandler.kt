@@ -56,8 +56,8 @@ class PushWebhookHandler : GithubWebhookHandler {
                     )
                 )
 
-                commits.forEach {
-                    commitRepository.save(
+                commitRepository.saveAll(
+                    commits.map {
                         CommitEntity(
                             userId = account!!,
                             commitId = it.id,
@@ -69,8 +69,8 @@ class PushWebhookHandler : GithubWebhookHandler {
                             modifiedFiles = it.modified,
                             repositoryId = repo
                         )
-                    )
-                }
+                    }
+                )
 
             }
 

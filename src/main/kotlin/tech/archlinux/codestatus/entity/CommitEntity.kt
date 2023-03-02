@@ -8,7 +8,7 @@ import java.time.OffsetDateTime
 @Entity
 @Table(name = "commits")
 class CommitEntity(
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     val userId: AccountEntity,
 
@@ -38,7 +38,7 @@ class CommitEntity(
     @Type(ListArrayType::class)
     val modifiedFiles: List<String>,
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "repository_id")
     var repositoryId: RepositoryEntity
 )
