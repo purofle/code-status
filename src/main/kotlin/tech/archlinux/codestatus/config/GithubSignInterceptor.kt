@@ -29,8 +29,8 @@ class GithubSignInterceptor : HandlerInterceptor {
         }
 
         // 判断是否存在 X-Hub-Signature-256
-        request.headerNames.toList().firstOrNull { it == "x-hub-signature-256" }
-            ?: throw RuntimeException("X-Hub-Signature-256 not found")
+        request.headerNames.toList().map { it.lowercase() }.firstOrNull { it == "x-hub-signature-256" }
+            ?: throw RuntimeException("X-Hub-Signature-256 not found, headers: ${request.headerNames.toList()}")
 
         // 获取 body bytes
         val body = getRequestString(requestWrapper.inputStream) ?: throw RuntimeException("body not found")
