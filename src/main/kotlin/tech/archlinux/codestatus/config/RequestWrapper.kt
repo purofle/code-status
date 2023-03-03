@@ -38,7 +38,7 @@ class RequestWrapper(request: HttpServletRequest) : HttpServletRequestWrapper(re
     }
 
     /**
-     * 重写getInputStream方法
+     * 重写 [HttpServletRequestWrapper.getInputStream] 方法
      */
     override fun getInputStream(): ServletInputStream {
         val byteArrayInputStream = ByteArrayInputStream(body.toByteArray())
