@@ -8,8 +8,10 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-textual = {extras = ["dev"], version = "^0.13.0"}
 babel = "^2.12.1"
+rich = "^13.3.1"
+aiohttp = "^3.8.4"
+pydantic = "^1.10.5"
 
 [tool.poetry.scripts]
 codestatus = "codestatus.__main__:cli"

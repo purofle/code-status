@@ -1,20 +1,10 @@
-from textual.app import App
+from rich.console import Console
 
-from .screen.Welcome_login import Welcome
-
-
-class TerminalApp(App):
-    SCREENS = {
-        "welcome": Welcome()
-    }
-
-    def on_mount(self):
-        self.push_screen("welcome")
+console = Console()
 
 
 def cli():
-    app = TerminalApp()
-    app.run()
+    console.print("Hello", "World")
 
 
 if __name__ == "__main__":

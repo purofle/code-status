@@ -6,5 +6,7 @@
 </p>
 
 ## code-status
+
 ### 许可证
+
 [AGPL-3.0](https://github.com/purofle/code-status/blob/main/LICENSE)
