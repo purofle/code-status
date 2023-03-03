@@ -8,8 +8,11 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-textual = "^0.13.0"
+textual = {extras = ["dev"], version = "^0.13.0"}
+babel = "^2.12.1"
 
+[tool.poetry.scripts]
+codestatus = "codestatus.__main__:cli"
 
 [build-system]
 requires = ["poetry-core"]
