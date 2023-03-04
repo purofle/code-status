@@ -1,10 +1,11 @@
 from rich.console import Console
 
+from codestatus.config import AppConfig
+
 console = Console()
 
 
 def cli():
-    console.print("Hello", "World")
 
 
 if __name__ == "__main__":
