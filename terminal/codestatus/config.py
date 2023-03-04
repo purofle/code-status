@@ -23,7 +23,7 @@ def get_config() -> "AppConfig":
     config_path = get_config_path()
     if not os.path.exists(config_path):
         raise FileNotFoundError(f"Config file not found: {config_path}")
-    AppConfig.parse_file(config_path)
+    return AppConfig.parse_file(config_path)
 
 
 def save_config(config: "AppConfig"):
