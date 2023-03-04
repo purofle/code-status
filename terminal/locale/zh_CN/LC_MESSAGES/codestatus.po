@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-04 20:54+0800\n"
-"PO-Revision-Date: 2023-03-04 20:55+0800\n"
+"POT-Creation-Date: 2023-03-04 22:20+0800\n"
+"PO-Revision-Date: 2023-03-04 22:23+0800\n"
 "Last-Translator: purofle@gmail.com\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
@@ -28,3 +28,24 @@ msgstr ""
 #: ../codestatus/res.py:13
 msgid "A simple CLI tool to check the status of your code"
 msgstr "一个可以检查你代码提交状态的小工具"
+
+#: ../codestatus/res.py:14
+msgid "Initialize the config file"
+msgstr "初始化配置文件"
+
+#: ../codestatus/res.py:15
+msgid "Get commit status"
+msgstr "获取 commit 状态"
+
+#: ../codestatus/res.py:16
+msgid "[green]Login success! config file saved."
+msgstr "[green]好耶，登录成功！配置文件已保存。"
+
+#: ../codestatus/res.py:17
+#, python-brace-format
+msgid ""
+"Please visit [bold green]{0}[/bold green] and enter [bold green]{1}[/bold "
+"green] to login."
+msgstr ""
+"打开 [bold green]{0}[/bold green] 然后输入 [bold green]{1}[/bold green] 来"
+"登录。"
