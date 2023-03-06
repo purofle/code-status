@@ -6,6 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import tech.archlinux.codestatus.service.ClientService
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -13,6 +14,9 @@ class CodeStatusApplicationTests {
 
     @Autowired
     lateinit var mockMvc: MockMvc
+
+    @Autowired
+    lateinit var clientService: ClientService
 
     @Test
     fun `test event_handler and sign`() {
@@ -28,6 +32,11 @@ class CodeStatusApplicationTests {
         }.let {
             mockMvc.perform(it)
         }
+    }
+
+    @Test
+    fun `test get user`() {
+        println(clientService.getUserName("ghu_mYncpnVyE4D013DC0eT88z"))
     }
 
 }
