@@ -10,8 +10,13 @@ class InterceptorConfig : WebMvcConfigurer {
     @Autowired
     lateinit var githubSignInterceptor: GithubSignInterceptor
 
+    @Autowired
+    lateinit var apiInterceptor: APIInterceptor
+
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(githubSignInterceptor)
             .addPathPatterns(AppConfig.webhook)
+        registry.addInterceptor(apiInterceptor)
+            .addPathPatterns("/api/**")
     }
 }

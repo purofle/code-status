@@ -3,6 +3,7 @@ package tech.archlinux.codestatus.service
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.boot.web.client.RestTemplateCustomizer
 import org.springframework.cache.annotation.CacheConfig
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpRequest
 import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.http.client.ClientHttpRequestInterceptor
@@ -14,9 +15,10 @@ import org.springframework.web.client.RestTemplate
 class ClientService {
 
     /**
-     * 从 token 获取用户名
+     * 从 token 获取用户名, 默认使用缓存
      * @param accessToken token
      */
+    @Cacheable("client", key = "#accessToken")
     fun getUserName(accessToken: String): Map<*, *>? {
 
         val restTemplate = RestTemplateBuilder(RestTemplateCustomizer { rt: RestTemplate ->
