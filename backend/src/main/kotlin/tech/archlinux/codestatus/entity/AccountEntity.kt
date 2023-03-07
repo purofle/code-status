@@ -12,6 +12,7 @@ class AccountEntity(
     @Id val id: Int,
     @Column(name = "node_id") val nodeId: String,
     @Column(name = "avatar_url") val avatarUrl: String,
-    val email: String,
-    val name: String,
+    @Column(name = "email") val email: String,
+    @Column(name = "login") val login: String,
+    @Column(name = "name") val name: String,
 )

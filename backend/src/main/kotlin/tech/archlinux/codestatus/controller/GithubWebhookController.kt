@@ -62,10 +62,11 @@ class GithubWebhookController {
                 accountRepository.save(
                     AccountEntity(
                         id = id,
-                        name = login,
+                        login = login,
                         nodeId = nodeId,
                         avatarUrl = avatarUrl,
-                        email = email
+                        email = email,
+                        name = "" // 暂时留空
                     )
                 )
                 log.debug("new account: $login ($id)")
