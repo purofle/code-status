@@ -3,7 +3,7 @@ name = "codestatus"
 version = "0.1.0"
 description = ""
 authors = ["purofle <purofle@gmail.com>"]
-license = "AGP-L3.0"
+license = "AGPL-3.0"
 readme = "README.md"
 
 [tool.poetry.dependencies]
