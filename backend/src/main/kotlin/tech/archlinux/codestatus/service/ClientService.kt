@@ -41,4 +41,8 @@ class ClientService {
             return it["login"] ?: throw RuntimeException("User not found")
         } ?: throw RuntimeException("User not found")
     }
+
+    fun syncCommits(number: Int) {
+        TODO("Not yet implemented")
+    }
 }
