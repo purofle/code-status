@@ -10,8 +10,8 @@ class ClientController {
 
     @RequestMapping("/user")
     fun user(
-        @RequestAttribute("user") user: Map<*, *>
-    ): Map<*, *> {
+        @RequestAttribute("user") user: String
+    ): String {
         return user
     }
 }

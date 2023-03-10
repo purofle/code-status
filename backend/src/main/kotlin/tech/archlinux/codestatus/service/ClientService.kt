@@ -19,7 +19,7 @@ class ClientService {
      * @param accessToken token
      */
     @Cacheable("client", key = "#accessToken")
-    fun getUserName(accessToken: String): Map<String, String> {
+        fun getUserName(accessToken: String): String {
 
         val restTemplate = RestTemplateBuilder(RestTemplateCustomizer { rt: RestTemplate ->
             rt.interceptors.add(
@@ -38,7 +38,7 @@ class ClientService {
         userRaw?.map {
             it.key.toString() to it.value.toString()
         }?.toMap()?.let {
-            return it
+            return it["login"] ?: throw RuntimeException("User not found")
         } ?: throw RuntimeException("User not found")
     }
 }
