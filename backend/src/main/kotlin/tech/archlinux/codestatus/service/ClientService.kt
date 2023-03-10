@@ -1,5 +1,6 @@
 package tech.archlinux.codestatus.service
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.boot.web.client.RestTemplateCustomizer
 import org.springframework.cache.annotation.CacheConfig
@@ -9,10 +10,15 @@ import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.http.client.ClientHttpRequestInterceptor
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
+import tech.archlinux.codestatus.repository.CommitRepository
 
 @Service
 @CacheConfig(cacheNames = ["client"])
 class ClientService {
+
+    @Autowired
+    lateinit var commitRepository: CommitRepository
+
 
     /**
      * 从 token 获取用户名, 默认使用缓存
@@ -44,5 +50,9 @@ class ClientService {
 
     fun syncCommits(number: Int) {
         TODO("Not yet implemented")
+    }
+
+    fun getRanking(): List<Any> {
+        return commitRepository.getRanking()
     }
 }

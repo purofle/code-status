@@ -31,4 +31,12 @@ class ClientController {
         clientService.syncCommits(number)
     }
 
+    /**
+     * 获取排行榜
+     */
+    @GetMapping("/ranking")
+    fun ranking(): List<Any> {
+        return clientService.getRanking()
+    }
+
 }
