@@ -15,4 +15,10 @@ interface CommitRepository : JpaRepository<CommitEntity, Int> {
             limit 10
             """, nativeQuery = true)
     fun getRanking(): List<Any>
+
+    // 获取最近一周内的所有提交
+    @Query("""select * from commits
+            where timestamp > date_trunc('week', now()) - interval '1 week'
+            """, nativeQuery = true)
+    fun getRecentCommits(): List<CommitEntity>
 }

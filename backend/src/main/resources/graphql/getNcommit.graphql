@@ -1,0 +1,33 @@
+{
+    search(query: "user:purofle", type: REPOSITORY, last: 100) {
+        nodes {
+            ... on Repository {
+                name
+                id
+                defaultBranchRef {
+                    name
+                    target {
+                        ... on Commit {
+                            history(first: 100, since: "2023-03-04T00:00:00") {
+                                nodes {
+                                    ... on Commit {
+                                        committedDate
+                                        additions
+                                        deletions
+                                        changedFilesIfAvailable
+                                        message
+                                        commitUrl
+                                        author {
+                                            name
+                                            email
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

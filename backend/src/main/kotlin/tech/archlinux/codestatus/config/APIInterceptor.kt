@@ -5,13 +5,13 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
-import tech.archlinux.codestatus.service.ClientService
+import tech.archlinux.codestatus.service.GithubAPIService
 
 @Component
 class APIInterceptor: HandlerInterceptor {
 
     @Autowired
-    lateinit var clientService: ClientService
+    lateinit var githubAPIService: GithubAPIService
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         if (request.headerNames.toList().firstOrNull { it.lowercase() == "authorization" } == null) {
@@ -25,7 +25,7 @@ class APIInterceptor: HandlerInterceptor {
         }
 
         // 向 request 内添加用户名
-        request.setAttribute("user", clientService.getUserName(token))
+        request.setAttribute("user", githubAPIService.getUserName(token))
 
         return true
     }
