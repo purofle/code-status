@@ -12,11 +12,14 @@ class ClientService {
     @Autowired
     lateinit var commitRepository: CommitRepository
 
+    @Autowired
+    lateinit var githubAPIService: GithubAPIService
+
     fun syncCommits(number: Int) {
         TODO("Not yet implemented")
     }
 
-    fun getRanking(): List<Any> {
-        return commitRepository.getRanking()
+    fun getRanking(token: String): String? {
+        return githubAPIService.recentlyCommit(token)
     }
 }

@@ -1,10 +1,7 @@
 package tech.archlinux.codestatus.controller
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestAttribute
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import tech.archlinux.codestatus.service.ClientService
 
 @RestController
@@ -35,8 +32,10 @@ class ClientController {
      * 获取排行榜
      */
     @GetMapping("/ranking")
-    fun ranking(): List<Any> {
-        return clientService.getRanking()
+    fun ranking(
+        @RequestHeader("Authorization") token: String,
+    ): String? {
+        return clientService.getRanking(token)
     }
 
 }

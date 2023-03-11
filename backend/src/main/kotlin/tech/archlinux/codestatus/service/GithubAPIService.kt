@@ -1,8 +1,12 @@
 package tech.archlinux.codestatus.service
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.boot.web.client.RestTemplateCustomizer
 import org.springframework.cache.annotation.Cacheable
+import org.springframework.core.io.ClassPathResource
+import org.springframework.http.HttpEntity
 import org.springframework.http.HttpRequest
 import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.http.client.ClientHttpRequestInterceptor
@@ -11,6 +15,7 @@ import org.springframework.web.client.RestTemplate
 
 @Service
 class GithubAPIService {
+    val log: Logger = LoggerFactory.getLogger(GithubAPIService::class.java)
 
     fun restTemplate(accessToken: String): RestTemplate = RestTemplateBuilder(RestTemplateCustomizer { rt: RestTemplate ->
         rt.interceptors.add(
@@ -18,6 +23,7 @@ class GithubAPIService {
                 request.headers.apply {
                     add("Authorization", "Bearer $accessToken")
                     add("X-GitHub-Api-Version", "2022-11-28")
+                    add("content-type", "application/json")
                     add("Accept", "application/vnd.github.v3+json")
                 }
                 execution.execute(request, body!!)
@@ -31,7 +37,6 @@ class GithubAPIService {
     @Cacheable("client", key = "#accessToken")
     fun getUserName(accessToken: String): String {
 
-
         val userRaw = restTemplate(accessToken).getForObject("https://api.github.com/user", Map::class.java)
 
         userRaw?.map {
@@ -41,10 +46,21 @@ class GithubAPIService {
         } ?: throw RuntimeException("User not found")
     }
 
-    fun graphqlRequest(accessToken: String, requestBody: String){
-        restTemplate(accessToken).postForObject("https://api.github.com/graphql", requestBody, String::class.java)
+    fun graphqlRequest(accessToken: String, requestBody: String): String? {
+        val request = HttpEntity(requestBody)
+        return restTemplate(accessToken).postForObject("https://api.github.com/graphql", request, String::class.java)
     }
 
+    fun recentlyCommit(accessToken: String): String? {
+        // 读取 resources/graphql/getCommit.graphql
+        val context = ClassPathResource("graphql/getCommit.graphql").inputStream.reader().readText()
+            .replace("\n", "")
+            .replace("\"", "\\\"")
+            .trimIndent()
 
+        val requestBody = "{\"query\": \"$context\"}"
+
+        return graphqlRequest(accessToken, requestBody)
+    }
 
 }

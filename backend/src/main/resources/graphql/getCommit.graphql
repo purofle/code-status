@@ -1,4 +1,4 @@
-{
+query {
     search(query: "user:purofle", type: REPOSITORY, last: 100) {
         nodes {
             ... on Repository {
