@@ -17,6 +17,8 @@ import org.springframework.web.client.RestTemplate
 import tech.archlinux.codestatus.pojo.Commit
 import tech.archlinux.codestatus.pojo.Repository
 import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @Service
 class GithubAPIService {
@@ -61,19 +63,27 @@ class GithubAPIService {
     }
 
     fun recentlyCommit(accessToken: String): HashMap<Repository, Commit> {
+
+        // 获取上周的日期，格式为 2023-03-04T00:00:00
+        val time = OffsetDateTime.now(ZoneId.of("UTC")).minusWeeks(1).format(DateTimeFormatter.ISO_DATE_TIME)
+
         // 读取 resources/graphql/getCommit.graphql
         val context = ClassPathResource("graphql/getCommit.graphql").inputStream.reader().readText()
-            .replace("\n", "")
-            .replace("\"", "\\\"")
-            .trimIndent()
+            .format(time)
 
-        val requestBody = "{\"query\": \"$context\"}"
-        val rawResult = graphqlRequest(accessToken, requestBody)
+        log.debug("Context: $context")
+
+        val jsonObject = objectMapper.createObjectNode()
+            .apply { put("query", context) }
+
+        val rawResult = graphqlRequest(accessToken, jsonObject.toString())
 
         if (rawResult == null) {
             log.error("Failed to get commit data")
             throw RuntimeException("Failed to get commit data")
         }
+
+        log.debug("Commit: $rawResult")
 
         val commits = HashMap<Repository, Commit>()
 
@@ -98,7 +108,6 @@ class GithubAPIService {
                 .findValue("nodes").size() == 0
         }.forEach {
                 // such as ["data"]["search"]["nodes"][0]
-                log.debug("Commit: $it")
                 val repo = Repository(
                     id = 0, // id用不上
                     nodeId = it.findValue("id").asText(),

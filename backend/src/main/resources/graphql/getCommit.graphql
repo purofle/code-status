@@ -13,7 +13,7 @@
                     name
                     target {
                         ... on Commit {
-                            history(first: 100, since: "2023-03-04T00:00:00") {
+                            history(first: 100, since: "%s") {
                                 nodes {
                                     ... on Commit {
                                         committedDate

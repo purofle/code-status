@@ -25,9 +25,9 @@ class ClientController {
      */
     @GetMapping("/sync")
     fun sync(
-        number: Int
+        @RequestHeader("Authorization") token: String
     ) {
-        clientService.syncCommits(number)
+        clientService.syncCommits(token)
     }
 
     /**

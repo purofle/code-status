@@ -17,11 +17,11 @@ class ClientService {
     @Autowired
     lateinit var githubAPIService: GithubAPIService
 
-    fun syncCommits(number: Int) {
-        TODO("Not yet implemented")
+    fun syncCommits(token: String) {
+        githubAPIService.recentlyCommit(token)
     }
 
     fun getRanking(token: String): HashMap<Repository, Commit> {
-        return githubAPIService.recentlyCommit(token)
+        TODO("Not yet implemented")
     }
 }
