@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository
 import tech.archlinux.codestatus.entity.AccountEntity
 
 @Repository
-interface AccountRepository : JpaRepository<AccountEntity, Int> {
-    fun existsAccountById(id: Int): Boolean
-    fun findAccountEntityById(id: Int): AccountEntity?
+interface AccountRepository : JpaRepository<AccountEntity, String> {
+    fun existsAccountById(id: String): Boolean
+    fun findAccountEntityById(id: String): AccountEntity?
 }

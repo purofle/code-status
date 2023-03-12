@@ -58,7 +58,7 @@ class GithubWebhookController {
 
         sender.apply {
             // 判断用户是否存在
-            if (!accountRepository.existsAccountById(id)) {
+            if (!accountRepository.existsAccountById(nodeId)) {
                 accountRepository.save(
                     AccountEntity(
                         id = nodeId,

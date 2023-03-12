@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 import tech.archlinux.codestatus.pojo.Commit
 import tech.archlinux.codestatus.pojo.Repository
 import tech.archlinux.codestatus.repository.CommitRepository
+import tech.archlinux.codestatus.repository.RepositoryRepository
 
 @Service
 @CacheConfig(cacheNames = ["client"])
@@ -15,10 +16,14 @@ class ClientService {
     lateinit var commitRepository: CommitRepository
 
     @Autowired
+    lateinit var repositoryRepository: RepositoryRepository
+
+    @Autowired
     lateinit var githubAPIService: GithubAPIService
 
     fun syncCommits(token: String) {
-        githubAPIService.recentlyCommit(token)
+        val recentlyCommit = githubAPIService.recentlyCommit(token)
+
     }
 
     fun getRanking(token: String): HashMap<Repository, Commit> {
