@@ -50,9 +50,9 @@ class ClientService {
                 timestamp = it.timestamp,
                 message = it.message,
                 url = it.url,
-                addedFiles = it.added,
-                removedFiles = it.removed,
-                modifiedFiles = it.modified,
+                addedFiles = it.added as Int,
+                removedFiles = it.removed as Int,
+                modifiedFiles = it.modified as Int,
                 repositoryId = repo
             ) })
         }

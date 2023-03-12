@@ -63,9 +63,9 @@ class PushWebhookHandler : GithubWebhookHandler {
                             timestamp = it.timestamp,
                             message = it.message,
                             url = it.url,
-                            addedFiles = it.added,
-                            removedFiles = it.removed,
-                            modifiedFiles = it.modified,
+                            addedFiles = (it.added as List<*>).size,
+                            removedFiles = (it.removed as List<*>).size,
+                            modifiedFiles = (it.modified as List<*>).size,
                             repositoryId = repo
                         )
                     }
