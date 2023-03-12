@@ -61,7 +61,7 @@ class GithubWebhookController {
             if (!accountRepository.existsAccountById(id)) {
                 accountRepository.save(
                     AccountEntity(
-                        id = id,
+                        id = nodeId,
                         login = login,
                         nodeId = nodeId,
                         avatarUrl = avatarUrl,

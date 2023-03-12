@@ -1,9 +1,14 @@
-query {
+{
     search(query: "user:purofle", type: REPOSITORY, last: 100) {
         nodes {
             ... on Repository {
                 name
                 id
+                isPrivate
+                nameWithOwner
+                owner {
+                    id
+                }
                 defaultBranchRef {
                     name
                     target {
@@ -17,6 +22,8 @@ query {
                                         changedFilesIfAvailable
                                         message
                                         commitUrl
+                                        id
+                                        oid
                                         author {
                                             name
                                             email

@@ -2,6 +2,8 @@ package tech.archlinux.codestatus.controller
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
+import tech.archlinux.codestatus.pojo.Commit
+import tech.archlinux.codestatus.pojo.Repository
 import tech.archlinux.codestatus.service.ClientService
 
 @RestController
@@ -34,7 +36,7 @@ class ClientController {
     @GetMapping("/ranking")
     fun ranking(
         @RequestHeader("Authorization") token: String,
-    ): String? {
+    ): HashMap<Repository, Commit> {
         return clientService.getRanking(token)
     }
 

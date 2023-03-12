@@ -48,8 +48,7 @@ class PushWebhookHandler : GithubWebhookHandler {
 
                 val repo = repositoryRepository.findRepositoryEntityById(id) ?: repositoryRepository.save(
                     RepositoryEntity(
-                        id = id,
-                        nodeId = nodeId,
+                        id = nodeId,
                         fullName = fullName,
                         isPrivate = isPrivate,
                         ownerId = account!!
@@ -64,9 +63,9 @@ class PushWebhookHandler : GithubWebhookHandler {
                             timestamp = it.timestamp,
                             message = it.message,
                             url = it.url,
-                            addedFiles = it.added,
-                            removedFiles = it.removed,
-                            modifiedFiles = it.modified,
+                            addedFiles = it.added.size,
+                            removedFiles = it.removed.size,
+                            modifiedFiles = it.modified.size,
                             repositoryId = repo
                         )
                     }

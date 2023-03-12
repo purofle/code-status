@@ -34,9 +34,4 @@ class CodeStatusApplicationTests {
         }
     }
 
-    @Test
-    fun `test get user`() {
-        println(githubAPIService.getUserName("ghu_mYncpnVyE4D013DC0eT88z"))
-    }
-
 }
