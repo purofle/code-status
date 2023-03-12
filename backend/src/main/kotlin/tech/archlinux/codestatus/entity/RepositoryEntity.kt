@@ -7,10 +7,7 @@ import jakarta.persistence.*
 class RepositoryEntity(
     @Id
     @Column(name = "id")
-    val id: Int,
-
-    @Column(name = "node_id")
-    var nodeId: String,
+    val id: String,
 
     @Column(name = "full_name")
     var fullName: String,
