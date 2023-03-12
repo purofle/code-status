@@ -62,7 +62,8 @@ class GithubAPIService {
         return restTemplate(accessToken).postForObject("https://api.github.com/graphql", request, String::class.java)
     }
 
-    fun recentlyCommit(accessToken: String): HashMap<Repository, Commit> {
+    fun recentlyCommit(accessToken: String): HashMap<Repository, List<Commit>> {
+        //TODO: 从指定仓库获取
 
         // 获取上周的日期，格式为 2023-03-04T00:00:00
         val time = OffsetDateTime.now(ZoneId.of("UTC")).minusWeeks(1).format(DateTimeFormatter.ISO_DATE_TIME)
@@ -70,8 +71,6 @@ class GithubAPIService {
         // 读取 resources/graphql/getCommit.graphql
         val context = ClassPathResource("graphql/getCommit.graphql").inputStream.reader().readText()
             .format(time)
-
-        log.debug("Context: $context")
 
         val jsonObject = objectMapper.createObjectNode()
             .apply { put("query", context) }
@@ -85,7 +84,7 @@ class GithubAPIService {
 
         log.debug("Commit: $rawResult")
 
-        val commits = HashMap<Repository, Commit>()
+        val commits = HashMap<Repository, List<Commit>>()
 
         // ["data"]["search"]["nodes"]
         objectMapper.readTree(rawResult)
@@ -97,11 +96,8 @@ class GithubAPIService {
                  * python:
                  * filter(lambda x: len(x) == 0, ["data"]["search"]["nodes"])
                  */
-                /**
-                 * 过滤掉没有 commit 的项目
-                 * python:
-                 * filter(lambda x: len(x) == 0, ["data"]["search"]["nodes"])
-                 */
+                log.debug("${it.findValue("defaultBranchRef").findValue("target").findValue("history").findValue("nodes").size() == 0}")
+                log.debug(it.findValue("defaultBranchRef").findValue("target").findValue("history").findValue("nodes").toPrettyString())
                 it.findValue("defaultBranchRef")
                 .findValue("target")
                 .findValue("history")
@@ -121,12 +117,17 @@ class GithubAPIService {
                     timestamp = OffsetDateTime.parse(it.findValue("committedDate").asText()),
                     url = it.findValue("commitUrl").asText(),
                     message = it.findValue("message").asText(),
-                    added = List(it.findValue("additions").asInt()) { "" },
-                    removed = List(it.findValue("deletions").asInt()) { "" },
-                    modified = List(it.findValue("changedFilesIfAvailable").asInt()) { "" },
+                    added = it.findValue("additions").asInt(),
+                    removed = it.findValue("deletions").asInt(),
+                    modified = it.findValue("changedFilesIfAvailable").asInt(),
                 )
 
-                commits[repo] = commit
+                // 放入 hashMap, 一个 repo 对应一个 List<Commit>, list 内有多个 commit
+                commits.getOrPut(repo) { mutableListOf(commit) }.let { list ->
+                    log.debug("getOrPut: ${list.size} $list")
+                    commits[repo] = list.plus(commit)
+                }
+
             }
 
         return commits

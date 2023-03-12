@@ -10,7 +10,6 @@ import jakarta.persistence.Table
 @Table(name = "account")
 class AccountEntity(
     @Id val id: String,
-    @Column(name = "node_id") val nodeId: String,
     @Column(name = "avatar_url") val avatarUrl: String,
     @Column(name = "email") val email: String,
     @Column(name = "login") val login: String,

@@ -63,7 +63,6 @@ class GithubWebhookController {
                     AccountEntity(
                         id = nodeId,
                         login = login,
-                        nodeId = nodeId,
                         avatarUrl = avatarUrl,
                         email = email,
                         name = "" // 暂时留空

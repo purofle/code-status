@@ -9,7 +9,7 @@ data class Commit(
     val message: String,
     val timestamp: OffsetDateTime,
     val url: String,
-    val added: List<String>,
-    val removed: List<String>,
-    val modified: List<String>
+    val added: Int,
+    val removed: Int,
+    val modified: Int
 )

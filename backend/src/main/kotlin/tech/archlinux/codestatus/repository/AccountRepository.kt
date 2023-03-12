@@ -8,4 +8,5 @@ import tech.archlinux.codestatus.entity.AccountEntity
 interface AccountRepository : JpaRepository<AccountEntity, String> {
     fun existsAccountById(id: String): Boolean
     fun findAccountEntityById(id: String): AccountEntity?
+    fun findAccountEntityByLogin(login: String): AccountEntity?
 }
