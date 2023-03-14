@@ -1,37 +1,50 @@
-{
-    search(query: "user:purofle", type: REPOSITORY, last: 100) {
-        nodes {
-            ... on Repository {
+query getContributedRepos($userLogin: String!) {
+    user(login: $userLogin) {
+        repositoriesContributedTo(
+            first: 100
+            contributionTypes: [COMMIT]
+            includeUserRepositories: true
+        ) {
+            nodes {
                 name
-                id
-                isPrivate
-                nameWithOwner
                 owner {
-                    id
+                    login
                 }
-                defaultBranchRef {
-                    name
-                    target {
-                        ... on Commit {
-                            history(first: 100, since: "%s") {
-                                nodes {
-                                    ... on Commit {
-                                        committedDate
-                                        additions
-                                        deletions
-                                        changedFilesIfAvailable
-                                        message
-                                        commitUrl
-                                        id
-                                        oid
-                                        author {
-                                            name
-                                            email
-                                        }
-                                    }
+            }
+            pageInfo {
+                endCursor
+                hasNextPage
+            }
+            totalCount
+        }
+    }
+}
+
+query getCommitByRepo($name: String!, $owner: String!) {
+    repository(name: $name, owner: $owner) {
+        defaultBranchRef {
+            target {
+                ... on Commit {
+                    history(first: 100) {
+                        nodes {
+                            commitUrl
+                            message
+                            oid
+                            committedDate
+                            deletions
+                            additions
+                            changedFilesIfAvailable
+                            author {
+                                user {
+                                    login
                                 }
                             }
                         }
+                        pageInfo {
+                            hasNextPage
+                            endCursor
+                        }
+                        totalCount
                     }
                 }
             }
