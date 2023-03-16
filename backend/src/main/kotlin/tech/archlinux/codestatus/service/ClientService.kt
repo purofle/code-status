@@ -1,5 +1,7 @@
 package tech.archlinux.codestatus.service
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.CacheConfig
 import org.springframework.stereotype.Service
@@ -27,14 +29,16 @@ class ClientService {
     @Autowired
     lateinit var accountRepository: AccountRepository
 
-    fun syncCommits(token: String) {
+    suspend fun syncCommits(token: String) {
         val recentlyCommit = githubAPIService.recentlyCommit(token)
 
         println(recentlyCommit)
 
         val username = githubAPIService.getUserName(token)
 
-        val user = accountRepository.findAccountEntityByLogin(username) ?: throw Exception("User not found")
+        val user = withContext(Dispatchers.IO) {
+            accountRepository.findAccountEntityByLogin(username.login)
+        } ?: throw Exception("User not found")
 
         // 保存数据
         recentlyCommit.forEach { (repository, commits) ->

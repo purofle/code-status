@@ -24,9 +24,6 @@ class APIInterceptor: HandlerInterceptor {
             throw RuntimeException("Authorization not match")
         }
 
-        // 向 request 内添加用户名
-        request.setAttribute("user", githubAPIService.getUserName(token))
-
         return true
     }
 }

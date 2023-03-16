@@ -1,6 +1,8 @@
 package tech.archlinux.codestatus.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -8,14 +10,19 @@ import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.boot.web.client.RestTemplateCustomizer
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.io.ClassPathResource
+import org.springframework.data.redis.core.ReactiveStringRedisTemplate
+import org.springframework.graphql.client.HttpGraphQlClient
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpRequest
 import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.http.client.ClientHttpRequestInterceptor
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToFlow
 import tech.archlinux.codestatus.pojo.Commit
 import tech.archlinux.codestatus.pojo.Repository
+import tech.archlinux.codestatus.pojo.UserLogin
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -24,9 +31,14 @@ import java.time.format.DateTimeFormatter
 class GithubAPIService {
 
     @Autowired
+    private lateinit var reactive: ReactiveStringRedisTemplate
+
+    @Autowired
     lateinit var objectMapper: ObjectMapper
 
     val log: Logger = LoggerFactory.getLogger(GithubAPIService::class.java)
+    val webClient = WebClient.create("https://api.github.com/")
+
 
     fun restTemplate(accessToken: String): RestTemplate = RestTemplateBuilder(RestTemplateCustomizer { rt: RestTemplate ->
         rt.interceptors.add(
@@ -46,15 +58,18 @@ class GithubAPIService {
      * @param accessToken token
      */
     @Cacheable("client", key = "#accessToken")
-    fun getUserName(accessToken: String): String {
+    suspend fun getUserName(accessToken: String): UserLogin {
 
-        val userRaw = restTemplate(accessToken).getForObject("https://api.github.com/user", Map::class.java)
-
-        userRaw?.map {
-            it.key.toString() to it.value.toString()
-        }?.toMap()?.let {
-            return it["login"] ?: throw RuntimeException("User not found")
-        } ?: throw RuntimeException("User not found")
+        return webClient.get()
+                .uri("user")
+                .header("Authorization", "Bearer $accessToken")
+                .retrieve()
+            .bodyToFlow<UserLogin>()
+            .catch { e ->
+                log.error("Failed to get user name", e)
+                throw RuntimeException("Failed to get user name")
+            }
+            .first()
     }
 
     fun graphqlRequest(accessToken: String, requestBody: String): String? {
@@ -63,7 +78,11 @@ class GithubAPIService {
     }
 
     fun recentlyCommit(accessToken: String): HashMap<Repository, List<Commit>> {
-        //TODO: 从指定仓库获取
+
+        val webClient = WebClient.builder()
+        HttpGraphQlClient.builder(webClient)
+            .headers { it.setBearerAuth(accessToken) }
+            .build()
 
         // 获取上周的日期，格式为 2023-03-04T00:00:00
         val time = OffsetDateTime.now(ZoneId.of("UTC")).minusWeeks(1).format(DateTimeFormatter.ISO_DATE_TIME)
@@ -71,6 +90,8 @@ class GithubAPIService {
         // 读取 resources/graphql/getCommit.graphql
         val context = ClassPathResource("graphql/getCommit.graphql").inputStream.reader().readText()
             .format(time)
+
+
 
         val jsonObject = objectMapper.createObjectNode()
             .apply { put("query", context) }

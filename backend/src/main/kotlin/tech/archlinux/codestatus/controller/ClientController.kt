@@ -13,18 +13,11 @@ class ClientController {
     @Autowired
     lateinit var clientService: ClientService
 
-    @GetMapping("/user")
-    fun user(
-        @RequestAttribute("user") user: String
-    ): String {
-        return user
-    }
-
     /**
      * 同步最近的提交记录
      */
     @GetMapping("/sync")
-    fun sync(
+    suspend fun sync(
         @RequestHeader("Authorization") token: String
     ) {
         clientService.syncCommits(token)
