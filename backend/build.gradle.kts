@@ -45,11 +45,19 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-Beta")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.7.0-Beta")
+
     developmentOnly("org.springframework.boot:spring-boot-devtools")
+
     implementation("org.springframework:spring-web")
+
     runtimeOnly("org.postgresql:postgresql")
+
     implementation("io.hypersistence:hypersistence-utils-hibernate-60:3.2.0")
+
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.0-Beta")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     implementation("commons-codec:commons-codec:1.15")

@@ -1,6 +1,7 @@
 package tech.archlinux.codestatus.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import jakarta.annotation.Resource
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import org.slf4j.Logger
@@ -8,9 +9,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.boot.web.client.RestTemplateCustomizer
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.io.ClassPathResource
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.graphql.client.HttpGraphQlClient
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpRequest
@@ -36,6 +37,9 @@ class GithubAPIService {
     @Autowired
     lateinit var objectMapper: ObjectMapper
 
+    @Resource
+    lateinit var redisTemplate: RedisTemplate<String, UserLogin>
+
     val log: Logger = LoggerFactory.getLogger(GithubAPIService::class.java)
     val webClient = WebClient.create("https://api.github.com/")
 
@@ -57,10 +61,15 @@ class GithubAPIService {
      * 从 token 获取用户名, 默认使用缓存
      * @param accessToken token
      */
-    @Cacheable("client", key = "#accessToken")
     suspend fun getUserName(accessToken: String): UserLogin {
 
-        return webClient.get()
+        val cacheUserLogin = redisTemplate.opsForValue().get(accessToken)
+
+        cacheUserLogin?.let {
+            return it
+        }
+
+        val userLogin = webClient.get()
                 .uri("user")
                 .header("Authorization", "Bearer $accessToken")
                 .retrieve()
@@ -70,6 +79,10 @@ class GithubAPIService {
                 throw RuntimeException("Failed to get user name")
             }
             .first()
+
+        redisTemplate.opsForValue().set(accessToken, userLogin)
+
+        return userLogin
     }
 
     fun graphqlRequest(accessToken: String, requestBody: String): String? {

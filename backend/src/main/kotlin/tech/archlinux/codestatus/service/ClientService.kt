@@ -3,7 +3,6 @@ package tech.archlinux.codestatus.service
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.cache.annotation.CacheConfig
 import org.springframework.stereotype.Service
 import tech.archlinux.codestatus.entity.CommitEntity
 import tech.archlinux.codestatus.entity.RepositoryEntity
@@ -14,7 +13,6 @@ import tech.archlinux.codestatus.repository.CommitRepository
 import tech.archlinux.codestatus.repository.RepositoryRepository
 
 @Service
-@CacheConfig(cacheNames = ["client"])
 class ClientService {
 
     @Autowired
