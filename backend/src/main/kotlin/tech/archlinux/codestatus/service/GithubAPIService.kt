@@ -105,7 +105,6 @@ class GithubAPIService {
             .format(time)
 
 
-
         val jsonObject = objectMapper.createObjectNode()
             .apply { put("query", context) }
 

@@ -30,8 +30,6 @@ class ClientService {
     suspend fun syncCommits(token: String) {
         val recentlyCommit = githubAPIService.recentlyCommit(token)
 
-        println(recentlyCommit)
-
         val username = githubAPIService.getUserName(token)
 
         val user = withContext(Dispatchers.IO) {

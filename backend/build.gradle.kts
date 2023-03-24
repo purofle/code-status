@@ -46,6 +46,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-Beta")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.7.0-Beta")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.0-Beta")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
