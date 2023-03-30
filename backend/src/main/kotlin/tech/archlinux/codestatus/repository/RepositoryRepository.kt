@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository
 import tech.archlinux.codestatus.entity.RepositoryEntity as GithubRepository
 
 @Repository
-interface RepositoryRepository : JpaRepository<GithubRepository, String> {
-    fun findRepositoryEntityById(id: String): GithubRepository?
+interface RepositoryRepository : JpaRepository<GithubRepository, Long> {
+    fun findRepositoryEntityById(id: Long): GithubRepository?
 }

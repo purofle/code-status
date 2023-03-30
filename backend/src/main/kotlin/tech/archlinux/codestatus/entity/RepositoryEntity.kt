@@ -7,7 +7,8 @@ import jakarta.persistence.*
 class RepositoryEntity(
     @Id
     @Column(name = "id")
-    val id: String,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long? = null,
 
     @Column(name = "full_name")
     var fullName: String,
@@ -15,7 +16,11 @@ class RepositoryEntity(
     @Column(name = "private")
     val isPrivate: Boolean,
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id")
-    val ownerId: AccountEntity
-)
+    @Column(name = "owner_id")
+    @OneToOne
+    val ownId: AccountEntity,
+
+    @Column(name = "node_id")
+    val nodeId: String,
+
+    )

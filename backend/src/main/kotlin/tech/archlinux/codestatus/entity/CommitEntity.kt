@@ -6,13 +6,13 @@ import java.time.OffsetDateTime
 @Entity
 @Table(name = "commits")
 class CommitEntity(
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    val userId: AccountEntity,
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    val id: Long? = null,
+
     @Column(name = "commit_id")
-    @PrimaryKeyJoinColumn
     val commitId: String,
 
     @Column(name = "timestamp")
@@ -33,7 +33,7 @@ class CommitEntity(
     @Column(name = "modified_files")
     val modifiedFiles: Int,
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "repository_id")
-    var repositoryId: RepositoryEntity
-)
+    @Column(name = "node_id")
+    val nodeId: String,
+
+    )

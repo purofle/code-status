@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository
 import tech.archlinux.codestatus.entity.CommitEntity
 
 @Repository
-interface CommitRepository : JpaRepository<CommitEntity, String> {
+interface CommitRepository : JpaRepository<CommitEntity, Long> {
     // 获取最近一周内的所有提交
     @Query("""select * from commits
             where timestamp > date_trunc('week', now()) - interval '1 week'
