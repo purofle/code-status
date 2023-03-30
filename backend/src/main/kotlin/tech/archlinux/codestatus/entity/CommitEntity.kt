@@ -36,11 +36,11 @@ class CommitEntity(
     @Column(name = "node_id")
     val nodeId: String? = null,
 
-    @Column(name = "user_id")
+    @JoinColumn(name = "user_id")
     @OneToOne
     val userId: AccountEntity,
 
-    @Column(name = "repository_id")
+    @JoinColumn(name = "repository_id")
     @OneToOne
     val repositoryId: RepositoryEntity,
 

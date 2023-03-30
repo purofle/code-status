@@ -41,17 +41,17 @@ class PushWebhookHandler : GithubWebhookHandler {
         pushEvent.apply {
             repository.apply {
 
-                val account = accountRepository.findAccountEntityById(pushEvent.sender.nodeId)
+                val account = accountRepository.findAccountEntityByNodeId(pushEvent.sender.nodeId)
 
                 logger.debug("Account: $account")
                 logger.debug("pushEvent: $pushEvent")
 
-                val repo = repositoryRepository.findRepositoryEntityById(nodeId) ?: repositoryRepository.save(
+                val repo = repositoryRepository.findRepositoryEntityByNodeId(nodeId) ?: repositoryRepository.save(
                     RepositoryEntity(
-                        id = nodeId,
                         fullName = fullName,
                         isPrivate = isPrivate,
-                        ownerId = account!!
+                        ownId = account!!,
+                        nodeId = nodeId
                     )
                 )
 

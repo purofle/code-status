@@ -38,11 +38,11 @@ class ClientService {
 
         // 保存数据
         recentlyCommit.forEach { (repository, commits) ->
-            val repo = repositoryRepository.findRepositoryEntityById(repository.nodeId) ?: repositoryRepository.save(RepositoryEntity(
-                id = repository.nodeId,
+            val repo = repositoryRepository.findRepositoryEntityByNodeId(repository.nodeId) ?: repositoryRepository.save(RepositoryEntity(
                 fullName = repository.fullName,
                 isPrivate = repository.isPrivate,
-                ownerId = user
+                nodeId = repository.nodeId,
+                ownId = user
             ))
             commitRepository.saveAll(commits.map { CommitEntity(
                 userId = user,

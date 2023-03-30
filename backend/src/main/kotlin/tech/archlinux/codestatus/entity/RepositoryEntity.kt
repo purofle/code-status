@@ -16,7 +16,7 @@ class RepositoryEntity(
     @Column(name = "private")
     val isPrivate: Boolean,
 
-    @Column(name = "owner_id")
+    @JoinColumn(name = "owner_id")
     @OneToOne
     val ownId: AccountEntity,
 

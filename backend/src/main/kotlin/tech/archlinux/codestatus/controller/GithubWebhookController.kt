@@ -58,14 +58,14 @@ class GithubWebhookController {
 
         sender.apply {
             // 判断用户是否存在
-            if (!accountRepository.existsAccountById(nodeId)) {
+            if (!accountRepository.existsAccountEntityByNodeId(nodeId)) {
                 accountRepository.save(
                     AccountEntity(
-                        id = nodeId,
                         login = login,
                         avatarUrl = avatarUrl,
                         email = email,
-                        name = "" // 暂时留空
+                        name = "", // 暂时留空
+                        nodeId = nodeId,
                     )
                 )
                 log.debug("new account: $login ($id)")
