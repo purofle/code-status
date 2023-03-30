@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/codestatus
+    driver-class-name: org.postgresql.Driver
+    username: codestatus
+    password: 114514
+  mvc:
+    log-request-details: true
+  application:
+    name: codestatus
+  jpa:
+    show-sql: true
+  data:
+    redis:
+      repositories:
+        enabled: false
+  graphql:
+    graphiql:
+      enabled: true
+
+logging:
+  level:
+    web: debug
+    tech.archlinux.codestatus: debug
+
+github:
+  webhook-secret: 1
+  client-secret: 9274fc5406c9530d103371f2c44edf1f4fe0a596
+  debug: false
