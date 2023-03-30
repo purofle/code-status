@@ -7,4 +7,6 @@ import tech.archlinux.codestatus.entity.RepositoryEntity as GithubRepository
 @Repository
 interface RepositoryRepository : JpaRepository<GithubRepository, Long> {
     fun findRepositoryEntityById(id: Long): GithubRepository?
+
+    fun findRepositoryEntityByNodeId(nodeId: String): GithubRepository?
 }

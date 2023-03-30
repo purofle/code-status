@@ -34,6 +34,14 @@ class CommitEntity(
     val modifiedFiles: Int,
 
     @Column(name = "node_id")
-    val nodeId: String,
+    val nodeId: String? = null,
+
+    @Column(name = "user_id")
+    @OneToOne
+    val userId: AccountEntity,
+
+    @Column(name = "repository_id")
+    @OneToOne
+    val repositoryId: RepositoryEntity,
 
     )

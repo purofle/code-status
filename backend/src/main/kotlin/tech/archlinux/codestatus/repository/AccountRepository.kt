@@ -9,4 +9,6 @@ interface AccountRepository : JpaRepository<AccountEntity, Long> {
     fun existsAccountById(id: Long): Boolean
     fun findAccountEntityById(id: Long): AccountEntity?
     fun findAccountEntityByLogin(login: String): AccountEntity?
+
+    fun findAccountEntityByNodeId(nodeId: String): AccountEntity?
 }
