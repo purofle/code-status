@@ -6,9 +6,7 @@ import tech.archlinux.codestatus.entity.AccountEntity
 
 @Repository
 interface AccountRepository : JpaRepository<AccountEntity, Long> {
-    fun existsAccountById(id: Long): Boolean
     fun existsAccountEntityByNodeId(nodeId: String): Boolean
-    fun findAccountEntityById(id: Long): AccountEntity?
     fun findAccountEntityByLogin(login: String): AccountEntity?
 
     fun findAccountEntityByNodeId(nodeId: String): AccountEntity?
