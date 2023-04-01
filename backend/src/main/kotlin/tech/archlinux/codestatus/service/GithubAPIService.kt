@@ -115,7 +115,7 @@ class GithubAPIService {
             throw RuntimeException("Failed to get commit data")
         }
 
-        log.debug("Commit: $rawResult")
+        log.debug("Commit: {}", rawResult)
 
         val commits = HashMap<Repository, List<Commit>>()
 
@@ -129,8 +129,6 @@ class GithubAPIService {
                  * python:
                  * filter(lambda x: len(x) == 0, ["data"]["search"]["nodes"])
                  */
-                log.debug("${it.findValue("defaultBranchRef").findValue("target").findValue("history").findValue("nodes").size() == 0}")
-                log.debug(it.findValue("defaultBranchRef").findValue("target").findValue("history").findValue("nodes").toPrettyString())
                 it.findValue("defaultBranchRef")
                 .findValue("target")
                 .findValue("history")
@@ -157,7 +155,7 @@ class GithubAPIService {
 
                 // 放入 hashMap, 一个 repo 对应一个 List<Commit>, list 内有多个 commit
                 commits.getOrPut(repo) { mutableListOf(commit) }.let { list ->
-                    log.debug("getOrPut: ${list.size} $list")
+                    log.debug("getOrPut: {} {}", list.size, list)
                     commits[repo] = list.plus(commit)
                 }
 
