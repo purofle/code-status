@@ -1,7 +1,7 @@
-query getContributedRepos($userLogin: String!) {
-    user(login: $userLogin) {
+query getContributedRepos($login: String!) {
+    user(login: $login) {
         repositoriesContributedTo(
-            first: 100
+            last: 15
             contributionTypes: [COMMIT]
             includeUserRepositories: true
         ) {
@@ -10,10 +10,6 @@ query getContributedRepos($userLogin: String!) {
                 owner {
                     login
                 }
-            }
-            pageInfo {
-                endCursor
-                hasNextPage
             }
             totalCount
         }

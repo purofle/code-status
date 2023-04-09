@@ -1,5 +1,7 @@
 package tech.archlinux.codestatus.service
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,8 +20,9 @@ class GithubAPIServiceTest {
     @Autowired
     lateinit var githubAPIService: GithubAPIService
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun recentlyCommit() {
+    fun recentlyCommit() = runTest {
         println(githubAPIService.recentlyCommit(accessToken))
     }
 }

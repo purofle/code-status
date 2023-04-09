@@ -1,12 +1,12 @@
 {
   "name": "Github GraphQL Schema",
-  "schemaPath": "schema.docs.graphql",
+  "schemaPath": "schema.docs.graphqls",
   "extensions": {
     "endpoints": {
       "Github GraphQL Endpoint": {
         "url": "https://api.github.com/graphql",
         "headers": {
-          "Authorization": "Bearer ghu_mYncpnVyE4D013DC0eT88zCn9XuwTj497wYf"
+          "Authorization": "Bearer ${env:GITHUB-ACCESS-TOKEN}"
         },
         "introspect": false
       }

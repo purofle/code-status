@@ -1,5 +1,6 @@
 package tech.archlinux.codestatus.service
 
+import com.apollographql.apollo3.ApolloClient
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.annotation.Resource
 import kotlinx.coroutines.flow.catch
@@ -9,10 +10,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.boot.web.client.RestTemplateCustomizer
-import org.springframework.core.io.ClassPathResource
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate
 import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.graphql.client.HttpGraphQlClient
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpRequest
 import org.springframework.http.client.ClientHttpRequestExecution
@@ -21,12 +20,8 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToFlow
-import tech.archlinux.codestatus.pojo.Commit
-import tech.archlinux.codestatus.pojo.Repository
+import tech.archlinux.codestatus.graphql.GetContributedReposQuery
 import tech.archlinux.codestatus.pojo.UserLogin
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 @Service
 class GithubAPIService {
@@ -90,78 +85,27 @@ class GithubAPIService {
         return restTemplate(accessToken).postForObject("https://api.github.com/graphql", request, String::class.java)
     }
 
-    fun recentlyCommit(accessToken: String): HashMap<Repository, List<Commit>> {
+    suspend fun recentlyCommit(accessToken: String) {
 
         val webClient = WebClient.builder()
-        HttpGraphQlClient.builder(webClient)
-            .headers { it.setBearerAuth(accessToken) }
+
+        val apolloClient = ApolloClient.Builder()
+            .addHttpHeader("Authorization", "Bearer $accessToken")
+            .serverUrl("https://api.github.com/graphql")
             .build()
 
-        // 获取上周的日期，格式为 2023-03-04T00:00:00
-        val time = OffsetDateTime.now(ZoneId.of("UTC")).minusWeeks(1).format(DateTimeFormatter.ISO_DATE_TIME)
+        val username = getUserName(accessToken).login
 
-        // 读取 resources/graphql/getCommit.graphql
-        val context = ClassPathResource("graphql/getCommit.graphql").inputStream.reader().readText()
-            .format(time)
+        val response = apolloClient.query(GetContributedReposQuery(username)).execute()
 
-
-        val jsonObject = objectMapper.createObjectNode()
-            .apply { put("query", context) }
-
-        val rawResult = graphqlRequest(accessToken, jsonObject.toString())
-
-        if (rawResult == null) {
-            log.error("Failed to get commit data")
-            throw RuntimeException("Failed to get commit data")
+        if (response.hasErrors()) {
+            log.error("Failed to get contributed repos, errors: {}", response.errors?.toString())
         }
 
-        log.debug("Commit: {}", rawResult)
-
-        val commits = HashMap<Repository, List<Commit>>()
-
-        // ["data"]["search"]["nodes"]
-        objectMapper.readTree(rawResult)
-            .findValue("data")
-            .findValue("search")
-            .findValue("nodes").filterNot {
-                /**
-                 * 过滤掉没有 commit 的项目
-                 * python:
-                 * filter(lambda x: len(x) == 0, ["data"]["search"]["nodes"])
-                 */
-                it.findValue("defaultBranchRef")
-                .findValue("target")
-                .findValue("history")
-                .findValue("nodes").size() == 0
-        }.forEach {
-                // such as ["data"]["search"]["nodes"][0]
-                val repo = Repository(
-                    id = 0, // id用不上
-                    nodeId = it.findValue("id").asText(),
-                    fullName = it.findValue("nameWithOwner").asText(),
-                    isPrivate = it.findValue("isPrivate").asBoolean(),
-                )
-
-                val commit = Commit(
-                    id = it.findValue("oid").asText(),
-                    treeId = it.findValue("id").asText(),
-                    timestamp = OffsetDateTime.parse(it.findValue("committedDate").asText()),
-                    url = it.findValue("commitUrl").asText(),
-                    message = it.findValue("message").asText(),
-                    added = it.findValue("additions").asInt(),
-                    removed = it.findValue("deletions").asInt(),
-                    modified = it.findValue("changedFilesIfAvailable").asInt(),
-                )
-
-                // 放入 hashMap, 一个 repo 对应一个 List<Commit>, list 内有多个 commit
-                commits.getOrPut(repo) { mutableListOf(commit) }.let { list ->
-                    log.debug("getOrPut: {} {}", list.size, list)
-                    commits[repo] = list.plus(commit)
-                }
-
-            }
-
-        return commits
+        val data = response.data
+        data?.user?.repositoriesContributedTo?.nodes?.filterNotNull()?.forEach {
+            log.debug("repo: {}", it)
+        }
     }
 
 }

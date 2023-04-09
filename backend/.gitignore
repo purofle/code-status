@@ -22,4 +22,6 @@ gradle-app.setting
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
+.env.dev
+
 /src/test/resources/application-test.properties

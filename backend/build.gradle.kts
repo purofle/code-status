@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	id("org.springframework.boot") version "3.0.3"
 	id("io.spring.dependency-management") version "1.1.0"
+    id("com.apollographql.apollo3") version "3.8.0"
 	kotlin("jvm") version "1.8.0"
 	kotlin("plugin.spring") version "1.8.0"
 	kotlin("plugin.jpa") version "1.8.0"
@@ -22,6 +23,13 @@ configurations {
 		exclude("org.springframework.boot", "spring-boot-starter-logging")
 	}
 }
+
+apollo {
+    service("service") {
+        packageName.set("tech.archlinux.codestatus.graphql")
+    }
+}
+
 
 repositories {
 	mavenCentral()
@@ -49,10 +57,11 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.0-Beta")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
-
     implementation("org.springframework:spring-web")
 
     runtimeOnly("org.postgresql:postgresql")
+
+    implementation("com.apollographql.apollo3:apollo-runtime:3.8.0")
 
     implementation("io.hypersistence:hypersistence-utils-hibernate-60:3.2.0")
 

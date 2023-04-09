@@ -4,8 +4,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import tech.archlinux.codestatus.entity.CommitEntity
-import tech.archlinux.codestatus.entity.RepositoryEntity
 import tech.archlinux.codestatus.pojo.Commit
 import tech.archlinux.codestatus.pojo.Repository
 import tech.archlinux.codestatus.repository.AccountRepository
@@ -37,25 +35,6 @@ class ClientService {
         } ?: throw Exception("User not found")
 
         // 保存数据
-        recentlyCommit.forEach { (repository, commits) ->
-            val repo = repositoryRepository.findRepositoryEntityByNodeId(repository.nodeId) ?: repositoryRepository.save(RepositoryEntity(
-                fullName = repository.fullName,
-                isPrivate = repository.isPrivate,
-                nodeId = repository.nodeId,
-                ownId = user
-            ))
-            commitRepository.saveAll(commits.map { CommitEntity(
-                userId = user,
-                commitId = it.id,
-                timestamp = it.timestamp,
-                message = it.message,
-                url = it.url,
-                addedFiles = it.added as Int,
-                removedFiles = it.removed as Int,
-                modifiedFiles = it.modified as Int,
-                repositoryId = repo
-            ) })
-        }
 
     }
 
