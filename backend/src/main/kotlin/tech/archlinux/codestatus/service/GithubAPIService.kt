@@ -3,6 +3,7 @@ package tech.archlinux.codestatus.service
 import com.apollographql.apollo3.ApolloClient
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.annotation.Resource
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import org.slf4j.Logger
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToFlow
+import tech.archlinux.codestatus.graphql.GetCommitByRepoQuery
 import tech.archlinux.codestatus.graphql.GetContributedReposQuery
 import tech.archlinux.codestatus.pojo.UserLogin
 
@@ -85,9 +87,9 @@ class GithubAPIService {
         return restTemplate(accessToken).postForObject("https://api.github.com/graphql", request, String::class.java)
     }
 
-    suspend fun recentlyCommit(accessToken: String) {
+    suspend fun recentlyCommit(accessToken: String): List<GetCommitByRepoQuery.Data> {
 
-        val webClient = WebClient.builder()
+        val scope = CoroutineScope(Dispatchers.IO + Job())
 
         val apolloClient = ApolloClient.Builder()
             .addHttpHeader("Authorization", "Bearer $accessToken")
@@ -98,14 +100,23 @@ class GithubAPIService {
 
         val response = apolloClient.query(GetContributedReposQuery(username)).execute()
 
-        if (response.hasErrors()) {
-            log.error("Failed to get contributed repos, errors: {}", response.errors?.toString())
-        }
-
         val data = response.data
-        data?.user?.repositoriesContributedTo?.nodes?.filterNotNull()?.forEach {
-            log.debug("repo: {}", it)
-        }
+        val contributedRepos = data!!.user!!.repositoriesContributedTo.nodes
+            ?.filterNotNull()
+            ?.filterNot { it.isPrivate }
+
+        val commitsResponse = contributedRepos?.map {
+            scope.async {
+                log.debug("Repo: {}", it)
+                val commits = apolloClient.query(GetCommitByRepoQuery(it.name, it.owner.login)).execute()
+                if (commits.hasErrors()) {
+                    log.error("Failed to get commits: {}", commits.errors)
+                }
+                commits.data!!
+            }
+        } ?: emptyList()
+
+        return commitsResponse.awaitAll()
     }
 
 }
