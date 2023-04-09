@@ -87,9 +87,7 @@ class GithubAPIService {
         return restTemplate(accessToken).postForObject("https://api.github.com/graphql", request, String::class.java)
     }
 
-    suspend fun recentlyCommit(accessToken: String): List<GetCommitByRepoQuery.Data> {
-
-        val scope = CoroutineScope(Dispatchers.IO + Job())
+        suspend fun recentlyCommit(accessToken: String): List<GetCommitByRepoQuery.Data> = coroutineScope {
 
         val apolloClient = ApolloClient.Builder()
             .addHttpHeader("Authorization", "Bearer $accessToken")
@@ -106,7 +104,7 @@ class GithubAPIService {
             ?.filterNot { it.isPrivate }
 
         val commitsResponse = contributedRepos?.map {
-            scope.async {
+            async(Dispatchers.IO) {
                 log.debug("Repo: {}", it)
                 val commits = apolloClient.query(GetCommitByRepoQuery(it.name, it.owner.login)).execute()
                 if (commits.hasErrors()) {
@@ -116,7 +114,9 @@ class GithubAPIService {
             }
         } ?: emptyList()
 
-        return commitsResponse.awaitAll()
+        return@coroutineScope withContext(Dispatchers.Main) {
+            commitsResponse.awaitAll()
+        }
     }
 
 }
