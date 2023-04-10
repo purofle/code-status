@@ -1,0 +1,18 @@
+version: "1.0"
+services:
+  backend:
+    image: "code-status:0.0.1-SNAPSHOT"
+    ports:
+      - "8080:8080"
+  postgresql:
+    image: "postgres"
+    restart: "always"
+    volumes:
+      - ./data/postgresql:/var/lib/postgresql
+      - ./init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
+    environment:
+      POSTGRES_USER: "codestatus"
+      POSTGRES_PASSWORD: "114514"
+      POSTGRES_DB: "codestatus"
+  redis:
+    image: "redis"

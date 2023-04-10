@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/codestatus
+    url: jdbc:postgresql://postgresql:5432/codestatus
     driver-class-name: org.postgresql.Driver
     username: codestatus
     password: 114514
