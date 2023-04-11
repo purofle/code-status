@@ -1,7 +1,10 @@
 version: "1.0"
 services:
   backend:
-    image: "code-status:0.0.1-SNAPSHOT"
+    build:
+      context: .
+      args:
+        - "JAR_FILE=build/libs/code-status-0.0.1-SNAPSHOT.jar"
     ports:
       - "8080:8080"
   postgresql:
