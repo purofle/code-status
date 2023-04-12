@@ -7,4 +7,5 @@ data class Repository(
     @JsonProperty("node_id") val nodeId: String,
     @JsonProperty("full_name") val fullName: String,
     @JsonProperty("private") val isPrivate: Boolean,
+    val owner: UserLogin
 )

@@ -13,7 +13,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.boot.web.client.RestTemplateCustomizer
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate
 import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.http.HttpEntity
 import org.springframework.http.HttpRequest
 import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.http.client.ClientHttpRequestInterceptor
@@ -82,12 +81,7 @@ class GithubAPIService {
         return userLogin
     }
 
-    fun graphqlRequest(accessToken: String, requestBody: String): String? {
-        val request = HttpEntity(requestBody)
-        return restTemplate(accessToken).postForObject("https://api.github.com/graphql", request, String::class.java)
-    }
-
-        suspend fun recentlyCommit(accessToken: String): List<GetCommitByRepoQuery.Data> = coroutineScope {
+    suspend fun recentlyCommit(accessToken: String): List<GetCommitByRepoQuery.Data> = coroutineScope {
 
         val apolloClient = ApolloClient.Builder()
             .addHttpHeader("Authorization", "Bearer $accessToken")

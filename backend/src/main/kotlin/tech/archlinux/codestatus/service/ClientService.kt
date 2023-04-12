@@ -1,7 +1,5 @@
 package tech.archlinux.codestatus.service
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import tech.archlinux.codestatus.pojo.Commit
@@ -30,11 +28,21 @@ class ClientService {
 
         val username = githubAPIService.getUserName(token)
 
-        val user = withContext(Dispatchers.IO) {
-            accountRepository.findAccountEntityByLogin(username.login)
-        } ?: throw Exception("User not found")
+        val user = accountRepository.findAccountEntityByLogin(username.login) ?: throw Exception("User not found")
 
-        // 保存数据
+//        val repositories = recentlyCommit
+//            .filterNot { it.repository != null }
+//            .map { it.repository!! }
+//            .distinct().map {
+//            repositoryRepository.findRepositoryEntityByFullName(it.nameWithOwner) ?: repositoryRepository.save(
+//                RepositoryEntity(
+//                    fullName = it.nameWithOwner,
+//                    isPrivate = it.isPrivate,
+//                    nodeId = it.id,
+//                    ownId =
+//                )
+//            )
+//        }
 
     }
 

@@ -19,6 +19,9 @@ query getContributedRepos($login: String!) {
 
 query getCommitByRepo($name: String!, $owner: String!) {
     repository(name: $name, owner: $owner) {
+        nameWithOwner
+        isPrivate
+        id
         defaultBranchRef {
             target {
                 ... on Commit {
