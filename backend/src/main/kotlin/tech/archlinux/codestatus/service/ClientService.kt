@@ -4,6 +4,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -16,6 +17,7 @@ import tech.archlinux.codestatus.repository.AccountRepository
 import tech.archlinux.codestatus.repository.CommitRepository
 import tech.archlinux.codestatus.repository.RepositoryRepository
 import tech.archlinux.codestatus.utils.StringUtils.toOffsetDateTime
+import java.time.OffsetDateTime
 
 @Service
 class ClientService {
@@ -32,12 +34,13 @@ class ClientService {
     @Autowired
     lateinit var accountRepository: AccountRepository
 
-    val log = LoggerFactory.getLogger(ClientService::class.java)
+    val log: Logger = LoggerFactory.getLogger(ClientService::class.java)
 
     @Transactional
     suspend fun syncCommits(token: String) {
         val recentlyCommit = githubAPIService.recentlyCommit(token)
             .mapNotNull { it.repository }
+            .filterNot { it.defaultBranchRef == null }
             .distinct()
 
         val username = githubAPIService.getUserName(token)
@@ -62,10 +65,14 @@ class ClientService {
         }.awaitAll()
 
             val commits = recentlyCommit
-                .filter { it.defaultBranchRef?.target?.onCommit?.history?.nodes != null }
-                .map {
-                    log.debug("Saving commits for repository {}...", it)
-                    it.defaultBranchRef?.target?.onCommit?.history?.nodes!!.map { node ->
+                .map { repo ->
+                    log.debug("Saving commits for repository {}...", repo)
+                    repo.defaultBranchRef?.target?.onCommit?.history?.nodes!!
+                        .filter {
+                            // 获取最近一周的 commits
+                            it?.committedDate?.toString()!!.toOffsetDateTime().isAfter(OffsetDateTime.now().minusWeeks(1))
+                        }
+                        .map { node ->
                         CommitEntity(
                             commitId = node?.oid!!.toString(),
                             timestamp = node.committedDate.toString().toOffsetDateTime(),
@@ -76,7 +83,7 @@ class ClientService {
                             modifiedFiles = node.changedFilesIfAvailable ?: 0,
                             nodeId = node.id,
                             userId = user,
-                            repositoryId = repositories.first { repository -> repository.fullName == it.nameWithOwner }
+                            repositoryId = repositories.first { repository -> repository.fullName == repo.nameWithOwner }
                         )
                     }
                 }
