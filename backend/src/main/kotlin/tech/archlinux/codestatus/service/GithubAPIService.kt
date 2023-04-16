@@ -9,15 +9,9 @@ import kotlinx.coroutines.flow.first
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.web.client.RestTemplateBuilder
-import org.springframework.boot.web.client.RestTemplateCustomizer
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate
 import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.http.HttpRequest
-import org.springframework.http.client.ClientHttpRequestExecution
-import org.springframework.http.client.ClientHttpRequestInterceptor
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestTemplate
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToFlow
 import tech.archlinux.codestatus.graphql.GetCommitByRepoQuery
@@ -38,20 +32,6 @@ class GithubAPIService {
 
     val log: Logger = LoggerFactory.getLogger(GithubAPIService::class.java)
     val webClient = WebClient.create("https://api.github.com/")
-
-
-    fun restTemplate(accessToken: String): RestTemplate = RestTemplateBuilder(RestTemplateCustomizer { rt: RestTemplate ->
-        rt.interceptors.add(
-            ClientHttpRequestInterceptor { request: HttpRequest, body: ByteArray?, execution: ClientHttpRequestExecution ->
-                request.headers.apply {
-                    add("Authorization", "Bearer $accessToken")
-                    add("X-GitHub-Api-Version", "2022-11-28")
-                    add("content-type", "application/json")
-                    add("Accept", "application/vnd.github.v3+json")
-                }
-                execution.execute(request, body!!)
-            })
-    }).build()
 
     /**
      * 从 token 获取用户名, 默认使用缓存
