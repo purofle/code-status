@@ -16,9 +16,6 @@ class RepositoryEntity(
     @Column(name = "private")
     val isPrivate: Boolean,
 
-    @Column(name = "owner")
-    val owner: String,
-
     @Column(name = "node_id")
     val nodeId: String,
 

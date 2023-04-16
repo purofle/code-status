@@ -3,7 +3,10 @@ package tech.archlinux.codestatus.service
 import com.apollographql.apollo3.ApolloClient
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.annotation.Resource
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import org.slf4j.Logger
@@ -88,9 +91,7 @@ class GithubAPIService {
             }
         } ?: emptyList()
 
-        return@coroutineScope withContext(Dispatchers.Main) {
-            commitsResponse.awaitAll()
-        }
+        return@coroutineScope commitsResponse.awaitAll()
     }
 
 }

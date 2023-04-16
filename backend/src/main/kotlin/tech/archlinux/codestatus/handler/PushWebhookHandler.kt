@@ -50,7 +50,6 @@ class PushWebhookHandler : GithubWebhookHandler {
                     RepositoryEntity(
                         fullName = fullName,
                         isPrivate = isPrivate,
-                        owner = owner.login,
                         nodeId = nodeId
                     )
                 )

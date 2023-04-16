@@ -52,6 +52,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-Beta")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.7.0-Beta")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.0-Beta")

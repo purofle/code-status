@@ -22,11 +22,15 @@ query getCommitByRepo($name: String!, $owner: String!) {
         nameWithOwner
         isPrivate
         id
+        owner {
+            login
+        }
         defaultBranchRef {
             target {
                 ... on Commit {
                     history(first: 100) {
                         nodes {
+                            id
                             commitUrl
                             message
                             oid
