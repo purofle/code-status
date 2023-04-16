@@ -47,6 +47,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-graphql")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
@@ -57,10 +58,13 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.7.0-Beta")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.0-Beta")
 
+    implementation("org.postgresql:r2dbc-postgresql:1.0.1.RELEASE")
+
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("org.springframework:spring-web")
 
     runtimeOnly("org.postgresql:postgresql")
+
 
     implementation("com.apollographql.apollo3:apollo-runtime:3.8.0")
 

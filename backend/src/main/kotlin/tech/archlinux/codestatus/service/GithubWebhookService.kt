@@ -10,7 +10,7 @@ class GithubWebhookService {
     @Autowired
     lateinit var handlers: List<GithubWebhookHandler>
 
-    fun handleWebhook(type: WebHookType, payload: String) {
+    suspend fun handleWebhook(type: WebHookType, payload: String) {
         handlers.first { it.webhookType == type }.handle(payload)
     }
 }

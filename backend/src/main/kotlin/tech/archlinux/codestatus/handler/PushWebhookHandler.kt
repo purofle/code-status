@@ -2,6 +2,8 @@ package tech.archlinux.codestatus.handler
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.first
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -33,7 +35,7 @@ class PushWebhookHandler : GithubWebhookHandler {
     @Autowired
     lateinit var objectMapper: ObjectMapper
 
-    override fun handle(payload: String) {
+    override suspend fun handle(payload: String) = coroutineScope {
         logger.debug("Handling push webhook")
 
         val pushEvent: PushEvent = objectMapper.readValue(payload)
@@ -46,7 +48,7 @@ class PushWebhookHandler : GithubWebhookHandler {
                 logger.debug("Account: {}", account)
                 logger.debug("pushEvent: {}", pushEvent)
 
-                val repo = repositoryRepository.findRepositoryEntityByNodeId(nodeId) ?: repositoryRepository.save(
+                val repo = repositoryRepository.findRepositoryEntityByNodeId(nodeId).first() ?: repositoryRepository.save(
                     RepositoryEntity(
                         fullName = fullName,
                         isPrivate = isPrivate,

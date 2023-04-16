@@ -3,6 +3,7 @@ package tech.archlinux.codestatus.service
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -52,7 +53,7 @@ class ClientService {
                 .map {
                     async {
                         log.debug("Saving repository {}...", it.nameWithOwner)
-                        repositoryRepository.findRepositoryEntityByFullName(it.nameWithOwner)
+                        repositoryRepository.findRepositoryEntityByFullName(it.nameWithOwner).first()
                             ?: repositoryRepository.save(
                                 RepositoryEntity(
                                     fullName = it.nameWithOwner,

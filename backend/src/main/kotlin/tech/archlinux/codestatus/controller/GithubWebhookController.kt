@@ -34,7 +34,7 @@ class GithubWebhookController {
     private val log: Logger = LoggerFactory.getLogger(GithubWebhookController::class.java)
 
     @PostMapping
-    fun handlerWebhook(
+    suspend fun handlerWebhook(
         req: HttpServletRequest,
         @RequestBody(required = false) requestBody: Map<String, Any>,
     ) {
